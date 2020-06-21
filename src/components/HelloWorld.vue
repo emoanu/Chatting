@@ -1,40 +1,100 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+    
+    <!-- <router-link v-bind:to="{
+            name: 'about',
+          }">about</router-link>
+<br>
+          <router-link v-bind:to="{
+            name: 'n',
+          }">new page</router-link> -->
+
+          messages :
+          <br>
+          <div v-for="(msg, index) in msgs" :key="index">
+            {{msg.sender}} : {{msg.text}} <br>
+            {{timeFormat(msg.time)}}
+            <br>
+          </div>
+          <input type="text" v-model="senderId"> <br>
+          <form @submit.prevent="saveMessage">
+          <input type="text" v-model="msg">
+          <input type="submit" value="submit">
+          
+          </form>
+
+
+          
   </div>
 </template>
 
 <script>
+import db from "@/firebase.config.js";
 export default {
   name: 'HelloWorld',
-  props: {
-    msg: String
+  data(){
+    return {
+      msgs:[],
+      msg :null,
+      senderId:null,
+      now :null
+    }
+  },
+  created(){
+   this.getMessages()
+  
+  db.collection("messages").onSnapshot(querySnapshot => {
+    querySnapshot.docChanges().forEach( change =>{
+      console.log(change.id)
+        db.collection("messages").orderBy("time","asc").get().then(data=>{
+                this.msgs = []
+              data.forEach(msg => {
+                var m = {
+                  id: msg.id,
+                  text : msg.data().text,
+                  sender : msg.data().sender,
+                  time :msg.data().time
+                }
+                this.msgs.push(m)
+              });
+            })
+    })
+
+  })
+
+  },
+  methods:{
+    getMessages(){
+      this.msgs =[];
+        db.collection("messages").get().then(data=>{
+              data.forEach(msg => {
+                var m = {
+                  id: msg.id,
+                  text : msg.data().text,
+                  sender :msg.data().sender,
+                  time: msg.data().time
+                }
+                this.msgs.push(m)
+              });
+            })
+    },
+
+    print(data){
+      console.log(data)
+    },
+    saveMessage(){
+      var time = new Date().getTime()
+      db.collection("messages").add({
+        text:this.msg,
+        sender : this.senderId,
+        time : time
+      }).then( this.msg= "" )
+
+    },
+    timeFormat(time){
+      var t = new Date(time).toLocaleString();
+      return t;
+    }
   }
 }
 </script>
