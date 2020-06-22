@@ -12,8 +12,8 @@
           <form class="login" action="">
           <h4>Create an Account</h4>
         
-          <label for="username">Enter an Username:</label>
-          <input type="text" placeholder=" Enter your Username" class="form-control" name="username" id=""><br>
+          <label for="username">Enter your Name:</label>
+          <input type="text" placeholder=" Enter your name" class="form-control" name="username" id=""><br>
           <br>
           <label for="mail">Enter your Email address:</label>
           <input type="email" placeholder="someone@email.com" class="form-control" name="mail" id=""><br>
@@ -23,6 +23,22 @@
           <br>
           <input type="submit" class="btn btn-primary" value="Submit">
           </form>
+
+          <form class="signIn" action="">
+          <h4>Login:</h4>
+        
+          
+          <label for="mail">Enter your Email address:</label>
+          <input type="email" placeholder="someone@email.com" class="form-control" name="mail" id=""><br>
+          <br>
+          <label for="pword">Enter a Password:</label>
+          <input type="password" class="form-control" name="pword" id=""><br>
+          <br>
+          <input type="submit" class="btn btn-primary" value="login">
+          </form>
+
+           
+
 <div v-if="loggedIn">
     <h3>WeChat</h3> 
     <br>
@@ -192,10 +208,16 @@ input#sent {
 form.login {
     background:#ded;
     text-align:left;
-    border:1px solid;
+    padding: 30px;
+
 }
 h4 {
     text-align:center;
     font-size:20px;
+}
+form.signIn {
+    background-color:#bebe;
+    margin:20px;
+    padding:20px;
 }
 </style>
