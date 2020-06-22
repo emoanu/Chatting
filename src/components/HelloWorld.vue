@@ -107,6 +107,21 @@
         </div>
       </div>
       <br />
+      <button class="emoji-btn">
+        <i @click.prevent="showHideEmoji" class="material-icons"
+          >sentiment_satisfied_alt</i
+        >
+      </button>
+
+      <div class="emoji-btns">
+        <li
+          @click="writeEmoji($event)"
+          v-for="(emoji, index) in emojis"
+          :key="index"
+        >
+          {{ emoji }}
+        </li>
+      </div>
       <form class="sendMsg" @submit.prevent="sendMessage">
         <input
           placeholder="Type Something..."
@@ -127,6 +142,8 @@ var gcliendId =
 var gsecrete = "94654jPuNHBIXUWHl85ySWNI";
 import db from "@/firebase.config.js";
 import firebase from "firebase";
+const emojis = require("emojis-list");
+
 //import firebase from 'firebase';
 export default {
   name: "HelloWorld",
@@ -136,6 +153,7 @@ export default {
       gsecrete: gsecrete,
       msgs: [],
       msg: null,
+      emojis: emojis,
       now: null,
       successMsg: null,
       errorMsg: null,
@@ -161,8 +179,9 @@ export default {
   },
   methods: {
     getMessages() {
-      this.msgs = [];
       db.collection("messages")
+        .orderBy("time", "desc")
+        .limit(30)
         .get()
         .then((data) => {
           data.forEach((msg) => {
@@ -174,29 +193,41 @@ export default {
             };
             this.msgs.push(m);
           });
+          this.msgs.reverse();
         });
-
       db.collection("messages").onSnapshot((querySnapshot) => {
-        querySnapshot.docChanges().forEach(() => {
-          db.collection("messages")
-            .orderBy("time", "desc")
-            .limit(30)
-            .get()
-            .then((data) => {
-              this.msgs = [];
-              data.forEach((msg) => {
-                var m = {
-                  id: msg.id,
-                  text: msg.data().text,
-                  sender: msg.data().sender,
-                  time: msg.data().time,
-                };
-                this.msgs.push(m);
-              });
-              this.msgs.reverse();
-            });
+        querySnapshot.docChanges().every((change) => {
+          if (change.type === "added") {
+            var m = {
+              id: change.doc.id,
+              text: change.doc.data().text,
+              sender: change.doc.data().sender,
+              time: change.doc.data().time,
+            };
+            this.msgs.push(m);
+            return false;
+          }
         });
       });
+      //   db.collection("messages").onSnapshot((querySnapshot) => {
+      //   querySnapshot.docChanges().forEach(() => {
+      //     db.collection("messages")
+      //       .orderBy("time", "desc")
+      //       .limit(1)
+      //       .get()
+      //       .then((data) => {
+      //         data.forEach((msg) => {
+      //           var m = {
+      //             id: msg.id,
+      //             text: msg.data().text,
+      //             sender: msg.data().sender,
+      //             time: msg.data().time,
+      //           };
+      //           this.msgs.push(m);
+      //         });
+      //   });
+      //     });
+      //   });
     },
 
     print(data) {
@@ -311,6 +342,17 @@ export default {
         .catch((err) => {
           self.errorMsg = err.message;
         });
+    },
+    showHideEmoji() {
+      var emojiBox = document.querySelector(".emoji-btns");
+      if (emojiBox.style.display == "block" || emojiBox.style.display == "") {
+        emojiBox.style.display = "none";
+      } else {
+        emojiBox.style.display = "block";
+      }
+    },
+    writeEmoji(e) {
+      document.getElementById("txt").value += e.target.innerHTML + " ";
     },
   },
 };
