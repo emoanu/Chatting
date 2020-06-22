@@ -1,7 +1,5 @@
 <template>
-
-<div class="hello container">
-
+  <div class="hello container">
     <!-- <router-link v-bind:to="{
             name: 'about',
           }">about</router-link>
@@ -9,215 +7,313 @@
           <router-link v-bind:to="{
             name: 'n',
           }">new page</router-link> -->
-          <form class="login" action="">
-          <h4>Create an Account</h4>
-        
-          <label for="username">Enter your Name:</label>
-          <input type="text" placeholder=" Enter your name" class="form-control" name="username" id=""><br>
-          <br>
-          <label for="mail">Enter your Email address:</label>
-          <input type="email" placeholder="someone@email.com" class="form-control" name="mail" id=""><br>
-          <br>
-          <label for="pword">Enter a Password:</label>
-          <input type="password" class="form-control" name="pword" id=""><br>
-          <br>
-          <input type="submit" class="btn btn-primary" value="Submit">
-          </form>
-
-          <form class="signIn" action="">
-          <h4>Login:</h4>
-        
-          
-          <label for="mail">Enter your Email address:</label>
-          <input type="email" placeholder="someone@email.com" class="form-control" name="mail" id=""><br>
-          <br>
-          <label for="pword">Enter a Password:</label>
-          <input type="password" class="form-control" name="pword" id=""><br>
-          <br>
-          <input type="submit" class="btn btn-primary" value="login">
-          </form>
-
-           
-
-<div v-if="loggedIn">
-    <h3>WeChat</h3> 
-    <br>
-    <div id="content" v-for="(msg, index) in msgs" :key="index">
-        {{msg.sender}} : {{msg.text}} <br>
-        <br>
-        {{timeFormat(msg.time)}}
-        <br>
+    <div class="alert alert-danger alert-dismissible fade show" v-if="errorMsg">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <p>
+        {{ errorMsg }}
+      </p>
     </div>
-    <input id="name" type="text" v-model="senderId"> <br>
-    <br>
-    <div class="sendMsg">
-    <form @submit.prevent="saveMessage">
-        <input id="txt" type="text" v-model="msg">
-        <input id="sent" type="submit" value="send">
-        <br>
-    </form>
+    <div
+      class="alert alert-success alert-dismissible fade show"
+      v-if="successMsg"
+    >
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <p>
+        {{ successMsg }}
+      </p>
     </div>
+    <div v-if="!loggedIn">
+      <form @submit.prevent="createUser" class="login create" action="">
+        <h4>Create an Account</h4>
+        <label for="username">Enter your Name:</label>
+        <input
+          type="text"
+          placeholder=" Enter your name"
+          class="form-control"
+          name="username"
+          v-model="regForm.name"
+        />
+        <label for="mail">Enter your Email address:</label>
+        <input
+          type="email"
+          placeholder="someone@email.com"
+          class="form-control"
+          name="mail"
+          v-model="regForm.email"
+        />
+        <label for="pword">Enter a Password:</label>
+        <input
+          type="password"
+          v-model="regForm.password"
+          class="form-control"
+          name="pword"
+        /><br />
+        <button class="btn btn-outline-secondary">
+          <i class="material-icons">person_add</i> Create Account
+        </button>
+        <button @click.prevent="showLogin" class="btn btn-outline-primary">
+          <i class="material-icons">lock</i> Login
+        </button>
+      </form>
+
+      <form @submit.prevent="loginUser" class="login signIn" action="">
+        <h4>Login</h4>
+
+        <label for="mail">Enter your Email address:</label>
+        <input
+          type="email"
+          placeholder="someone@email.com"
+          class="form-control"
+          name="mail"
+          v-model="loginForm.email"
+        />
+        <label for="pword">Enter a Password:</label>
+        <input
+          type="password"
+          placeholder="Password"
+          class="form-control"
+          name="pword"
+          v-model="loginForm.password"
+        /><br />
+        <button class="btn btn-outline-secondary">
+          <i class="material-icons">lock</i> Login
+        </button>
+        <button @click.prevent="showReg" class="btn btn-outline-primary">
+          <i class="material-icons">person_add</i> SignUp
+        </button>
+      </form>
     </div>
 
-</div>
+    <div v-if="loggedIn">
+      {{ loginUserData.name }}
+      <button @click="signOut" class="btn btn-outline-danger">
+        <i class="material-icons">exit_to_app</i> SignOut
+      </button>
+      <h3>WeChat</h3>
+      <br />
+      <div class="texts">
+        <div v-for="(msg, index) in msgs" :key="index">
+          <div
+            :class="{
+              message: true,
+              sent: msg.sender == loginUserData.id,
+            }"
+          >
+            {{ msg.text }} <br />
+            <br />
+            {{ timeFormat(msg.time) }}
+            <br />
+          </div>
+        </div>
+      </div>
+      <br />
+      <form class="sendMsg" @submit.prevent="sendMessage">
+        <input
+          placeholder="Type Something..."
+          id="txt"
+          type="text"
+          autocomplete="off"
+          v-model="msg"
+        />
+        <br />
+      </form>
+    </div>
+  </div>
 </template>
 
 <script>
-var gcliendId = "905368348805-osp3kcpr6o0sqj1fjj5229j72tkaatsc.apps.googleusercontent.com";
+var gcliendId =
+  "905368348805-osp3kcpr6o0sqj1fjj5229j72tkaatsc.apps.googleusercontent.com";
 var gsecrete = "94654jPuNHBIXUWHl85ySWNI";
 import db from "@/firebase.config.js";
+import firebase from "firebase";
 //import firebase from 'firebase';
 export default {
-    name: 'HelloWorld',
-    data() {
-        return {
-            gcliendId:gcliendId,
-            gsecrete:gsecrete,
-            msgs: [],
-            msg: null,
-            senderId: null,
-            now: null,
-            loggedIn:true
-        }
+  name: "HelloWorld",
+  data() {
+    return {
+      gcliendId: gcliendId,
+      gsecrete: gsecrete,
+      msgs: [],
+      msg: null,
+      now: null,
+      successMsg: null,
+      errorMsg: null,
+      loggedIn: false,
+      loginForm: {
+        email: null,
+        password: null,
+      },
+      regForm: {
+        name: null,
+        email: null,
+        password: null,
+      },
+      loginUserData: {
+        name: null,
+        email: null,
+        id: null,
+      },
+    };
+  },
+  created() {
+    this.checkAuth();
+  },
+  methods: {
+    getMessages() {
+      this.msgs = [];
+      db.collection("messages")
+        .get()
+        .then((data) => {
+          data.forEach((msg) => {
+            var m = {
+              id: msg.id,
+              text: msg.data().text,
+              sender: msg.data().sender,
+              time: msg.data().time,
+            };
+            this.msgs.push(m);
+          });
+        });
+
+      db.collection("messages").onSnapshot((querySnapshot) => {
+        querySnapshot.docChanges().forEach(() => {
+          db.collection("messages")
+            .orderBy("time", "desc")
+            .limit(30)
+            .get()
+            .then((data) => {
+              this.msgs = [];
+              data.forEach((msg) => {
+                var m = {
+                  id: msg.id,
+                  text: msg.data().text,
+                  sender: msg.data().sender,
+                  time: msg.data().time,
+                };
+                this.msgs.push(m);
+              });
+              this.msgs.reverse();
+            });
+        });
+      });
     },
-    created() {
 
-      if(this.loggedIn){
-        this.getMessages()
-
-        db.collection("messages").onSnapshot(querySnapshot => {
-            querySnapshot.docChanges().forEach(change => {
-                console.log(change.id)
-                db.collection("messages").orderBy("time", "asc").get().then(data => {
-                    this.msgs = []
-                    data.forEach(msg => {
-                        var m = {
-                            id: msg.id,
-                            text: msg.data().text,
-                            sender: msg.data().sender,
-                            time: msg.data().time
-                        }
-                        this.msgs.push(m)
-                    });
-                })
-            })
-
+    print(data) {
+      console.log(data);
+    },
+    sendMessage() {
+      var time = new Date().getTime();
+      db.collection("messages")
+        .add({
+          text: this.msg,
+          sender: this.loginUserData.id,
+          time: time,
         })
-      }
+        .then((this.msg = ""));
     },
-    methods: {
-        getMessages() {
-            this.msgs = [];
-            db.collection("messages").get().then(data => {
-                data.forEach(msg => {
-                    var m = {
-                        id: msg.id,
-                        text: msg.data().text,
-                        sender: msg.data().sender,
-                        time: msg.data().time
-                    }
-                    this.msgs.push(m)
-                });
-            })
-        },
-
-        print(data) {
-            console.log(data)
-        },
-        saveMessage() {
-            var time = new Date().getTime()
-            db.collection("messages").add({
-                text: this.msg,
-                sender: this.senderId,
-                time: time
-            }).then(this.msg = "")
-
-        },
-        timeFormat(time) {
-            var t = new Date(time).toLocaleString();
-            return t;
+    timeFormat(time) {
+      var d = new Date(time);
+      var h = d.getHours();
+      var m = d.getMinutes();
+      var ampm = "";
+      if (h > 12 && h != 0) {
+        h -= 12;
+        ampm = "PM";
+      } else {
+        ampm = "AM";
+      }
+      return h + ":" + m + " " + ampm;
+    },
+    showReg() {
+      document.querySelector(".create").style.display = "block";
+      document.querySelector(".signIn").style.display = "none";
+    },
+    showLogin() {
+      document.querySelector(".create").style.display = "none";
+      document.querySelector(".signIn").style.display = "block";
+    },
+    loginUser() {
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(
+          this.loginForm.email,
+          this.loginForm.password
+        )
+        .then(() => {
+          this.successMsg = "Logged in Successfully!";
+          this.checkAuth();
+          (this.loginForm.password = null), (this.loggedIn = true);
+        })
+        .catch((error) => {
+          this.errorMsg = error.message;
+        });
+    },
+    createUser() {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(
+          this.regForm.email,
+          this.regForm.password
+        )
+        .then(() => {
+          this.successMsg = "Account has been successfully created.";
+          this.checkAuth();
+          this.setName(this.regForm.name);
+          this.regForm.password = null;
+        })
+        .catch((error) => {
+          this.errorMsg = error.message;
+        });
+    },
+    checkAuth() {
+      var self = this;
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          var userProfile = firebase.auth().currentUser;
+          self.loginUserData.name = userProfile.displayName;
+          self.loginUserData.id = userProfile.uid;
+          self.loginUserData.email = userProfile.email;
+          self.getMessages();
+          self.loggedIn = true;
+        } else {
+          self.loggedIn = false;
+          self.loginUserData.name = null;
+          self.loginUserData.id = null;
+          self.loginUserData.email = null;
         }
-    }
-}
+      });
+    },
+    signOut() {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          this.successMsg = "Successfully logout";
+          this.checkAuth();
+        })
+        .catch((error) => {
+          this.errorMsg = error.message;
+          this.checkAuth();
+        });
+    },
+    setName(n) {
+      var self = this;
+      var user = firebase.auth().currentUser;
+      user
+        .updateProfile({
+          displayName: n,
+        })
+        .then(() => {
+          self.loginUserData.name = n;
+          self.successMsg = "Name successfully saved!";
+        })
+        .catch((err) => {
+          self.errorMsg = err.message;
+        });
+    },
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-  
-  
-<style>
-
-h3 {
-    margin: 40px 0 0;
-}
-
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-li {
-    display: inline-block;
-    margin: 0 10px;
-}
-
-a {
-    color: #42b983;
-}
-
-body {
-    background-color: #aad1e7;
-}
-
-.hello {
-    background-color: #83c1dd;
-
-}
-
-div#content {
-    text-align: left;
-    border: 1px solid;
-    border-radius: 1px 13px 20px;
-    margin: 20px;
-    width: fit-content;
-    border-radius: 1px 15px 15px 15px;
-        box-shadow: 1px 2px 2px #7c5e5e;
-    background-color: #fff;
-
-}
-input#txt {
-    width:300px;
-    height:30px;
-    border-radius:20px;
-    font-size:20px;
-    background-color:#ff572238;
-        width: 200px;
-
-}
-input#sent {
-    font-size:15px;
-    border-radius:10px;
-    background-color:#beb;
-}
-.sendMsg {
-    background-color:#ebc897;
-    padding:20px;
-    padding-top:0px;
-    padding-bottom:0px;
-    
-}
-form.login {
-    background:#ded;
-    text-align:left;
-    padding: 30px;
-
-}
-h4 {
-    text-align:center;
-    font-size:20px;
-}
-form.signIn {
-    background-color:#bebe;
-    margin:20px;
-    padding:20px;
-}
-</style>

@@ -1,0 +1,74 @@
+h3 {
+    margin: 40px 0 0;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    display: inline-block;
+    margin: 0 10px;
+}
+
+a {
+    color: #42b983;
+}
+
+div.message {
+    text-align: left;
+    border: 1px solid;
+    border-radius: 1px 13px 20px;
+    margin: 20px;
+    width: fit-content;
+    border-radius: 1px 15px 15px 15px;
+    box-shadow: 1px 2px 2px #7c5e5e;
+    background-color: #fff;
+}
+
+.message.sent {
+    float: right;
+}
+
+.message {
+    background: #fff;
+    max-width: 60%;
+    margin-top: 8px;
+    padding: 13px;
+    position: relative;
+    clear: both;
+
+}
+
+form.login {
+    background: #ded;
+    text-align: left;
+    padding: 30px;
+}
+
+h4 {
+    text-align: center;
+    font-size: 20px;
+}
+
+.create {
+    display: none;
+}
+
+.material-icons {
+    vertical-align: top;
+}
+
+input#txt {
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    width: 90%;
+    padding: 10px;
+
+}
+
+.texts {
+    overflow-x: hidden;
+}
