@@ -85,11 +85,15 @@
     </div>
 
     <div v-if="loggedIn">
-      {{ loginUserData.name }}
+    <div class="header">
+    {{ loginUserData.name }}
       <button @click="signOut" class="btn btn-outline-danger">
         <i class="material-icons">exit_to_app</i> SignOut
       </button>
-      <h3>WeChat</h3>
+    </div>
+      
+      <h3 id="title">WeChat <i class="material-icons chat">chat_bubble_outline</i></h3>
+     
       <br />
       <div class="texts">
         <div v-for="(msg, index) in msgs" :key="index">
@@ -143,6 +147,7 @@ var gsecrete = "94654jPuNHBIXUWHl85ySWNI";
 import db from "@/firebase.config.js";
 import firebase from "firebase";
 const emojis = require("emojis-list");
+
 
 //import firebase from 'firebase';
 export default {
