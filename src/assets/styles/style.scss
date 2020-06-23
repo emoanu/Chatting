@@ -25,6 +25,7 @@ div.message {
   border-radius: 1px 15px 15px 15px;
   box-shadow: 1px 2px 2px #7c5e5e;
   background-color: #fff;
+  word-break: break-all;
 }
 
 .message.sent {
@@ -70,6 +71,8 @@ input#txt {
 
 .texts {
   overflow-x: hidden;
+  margin-bottom: 100px;
+  padding-bottom: 0;
 }
 .emoji-btn i.material-icons {
   position: fixed;

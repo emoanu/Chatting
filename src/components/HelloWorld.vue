@@ -1,5 +1,5 @@
 <template>
-  <div class="hello container">
+<div class="hello container">
     <!-- <router-link v-bind:to="{
             name: 'about',
           }">about</router-link>
@@ -7,7 +7,7 @@
           <router-link v-bind:to="{
             name: 'n',
           }">new page</router-link> -->
-    <div class="alert alert-danger alert-dismissible fade show" v-if="errorMsg">
+<div class="alert alert-danger alert-dismissible fade show" v-if="errorMsg">
       <button type="button" class="close" data-dismiss="alert">&times;</button>
       <p>
         {{ errorMsg }}
@@ -205,6 +205,7 @@ export default {
               time: change.doc.data().time,
             };
             this.msgs.push(m);
+            window.scrollTo(0,document.querySelector('div.texts').scrollHeight);
             return false;
           }
         });
@@ -352,7 +353,7 @@ export default {
       }
     },
     writeEmoji(e) {
-      document.getElementById("txt").value += e.target.innerHTML + " ";
+      document.getElementById("txt").value += e.target.innerHTML ;
     },
   },
 };
