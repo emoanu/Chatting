@@ -1,10 +1,14 @@
-#title{
+.title{
 
-  background: -webkit-linear-gradient(#d62424, #110c0c);
+  background: -webkit-linear-gradient( #24bfd6, #f6f9f1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight:bold;
   font-size:50px;
+  // position: fixed;
+  // z-index: 1;
+  // padding-top: 20px;
+ 
 }
 
 ul {
@@ -23,9 +27,9 @@ a {
 
 div.message {
   text-align: left;
-  border: 1px solid;
-  color:white;
-  
+  border: 1px solid  #28d7fd;
+  color:#fff;
+ 
   margin: 20px;
   width: fit-content;
   border-radius: 0px 8px 8px 8px;
@@ -75,14 +79,21 @@ input#txt {
   left: 14%;
   width: 80%;
   padding: 10px;
-  border-radius: 20px;
+  border-radius:20px;
+  border-color: white;
+  background: transparent;
+  color: white;
+
 }
 
 .texts {
   overflow-x: hidden;
-  margin-bottom: 100px;
-  padding-bottom: 0;
-  background:#eb8181;
+  /* margin-bottom: 80px; */
+  padding-bottom: 100px;
+  background: url(/img/crop.6d6f940a.jpg);
+  margin-top: 50px;
+  background-attachment: fixed;
+  background-repeat: initial;
   
 }
 .emoji-btn i.material-icons {
@@ -92,6 +103,7 @@ input#txt {
   z-index: 2;
   font-size: 44px;
   width: 10%;
+  color:white;
 }
 .emoji-btns {
   position: fixed;
@@ -108,7 +120,10 @@ input#txt {
 }
 .header {
   background:black;
-  color:#f00;
+  color: #2acde6;
+  position:fixed;
+  z-index: 1;
+ 
   
  
   

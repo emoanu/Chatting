@@ -84,15 +84,16 @@
       </form>
     </div>
 
-    <div v-if="loggedIn">
+    <div class="inbox" v-if="loggedIn">
     <div class="header">
     {{ loginUserData.name }}
-      <button @click="signOut" class="btn btn-outline-danger">
+      <button @click="signOut" class="btn btn-outline-primary">
         <i class="material-icons">exit_to_app</i> SignOut
       </button>
+      <span class="title">WeChat<i class="material-icons chat">chat_bubble_outline</i></span>
     </div>
       
-      <h3 id="title">WeChat <i class="material-icons chat">chat_bubble_outline</i></h3>
+      
      
       <br />
       <div class="texts">
