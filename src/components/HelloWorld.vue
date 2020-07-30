@@ -1,5 +1,5 @@
 <template>
-<div class="hello container">
+<div class="container">
     <!-- <router-link v-bind:to="{
             name: 'about',
           }">about</router-link>

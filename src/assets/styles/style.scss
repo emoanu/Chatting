@@ -1,3 +1,12 @@
+// div#app {
+//   background:aqua;
+//   background-repeat:repeat;
+// }
+*{
+  margin:0;
+  padding:0;
+  box-sizing: border-box;
+}
 .title{
 
   background: -webkit-linear-gradient( #24bfd6, #f6f9f1);
@@ -5,10 +14,22 @@
   -webkit-text-fill-color: transparent;
   font-weight:bold;
   font-size:50px;
+  
   // position: fixed;
   // z-index: 1;
   // padding-top: 20px;
  
+}
+.container{
+background-image: url('./assets/crop.jpg');
+background-size: cover;
+background-attachment:fixed;
+margin:0;
+width:100%;
+padding-right: 0;
+padding-left: 0;
+margin-right: 0;
+margin-left: 0;
 }
 
 ul {
@@ -81,7 +102,7 @@ input#txt {
   padding: 10px;
   border-radius:20px;
   border-color: white;
-  background: transparent;
+  background: black;
   color: white;
 
 }
@@ -90,7 +111,7 @@ input#txt {
   overflow-x: hidden;
   /* margin-bottom: 80px; */
   padding-bottom: 100px;
-  background: url(/img/crop.6d6f940a.jpg);
+  
   margin-top: 50px;
   background-attachment: fixed;
   background-repeat: initial;
@@ -103,7 +124,7 @@ input#txt {
   z-index: 2;
   font-size: 44px;
   width: 10%;
-  color:white;
+  color: #f9f0f0;
 }
 .emoji-btns {
   position: fixed;
@@ -123,7 +144,8 @@ input#txt {
   color: #2acde6;
   position:fixed;
   z-index: 1;
- 
+  width: 100%;
+
   
  
   
